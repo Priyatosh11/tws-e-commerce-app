@@ -2,16 +2,16 @@
 
 pipeline {
     agent any
-    
+
     environment {
         // Update the main app image name to match the deployment file
-        DOCKER_IMAGE_NAME = 'trainwithshubham/easyshop-app'
-        DOCKER_MIGRATION_IMAGE_NAME = 'trainwithshubham/easyshop-migration'
+        DOCKER_IMAGE_NAME = 'priyatosh11/easyshop-app'
+        DOCKER_MIGRATION_IMAGE_NAME = 'priyatosh11/easyshop-migration'
         DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
         GITHUB_CREDENTIALS = credentials('github-credentials')
         GIT_BRANCH = "master"
     }
-    
+
     stages {
         stage('Cleanup Workspace') {
             steps {
@@ -20,15 +20,15 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Clone Repository') {
             steps {
                 script {
-                    clone("https://github.com/LondheShubham153/tws-e-commerce-app.git","master")
+                    clone("https://github.com/Priyatosh11/tws-e-commerce-app.git","master")
                 }
             }
         }
-        
+
         stage('Build Docker Images') {
             parallel {
                 stage('Build Main App Image') {
@@ -43,7 +43,7 @@ pipeline {
                         }
                     }
                 }
-                
+
                 stage('Build Migration Image') {
                     steps {
                         script {
@@ -58,7 +58,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Run Unit Tests') {
             steps {
                 script {
@@ -66,18 +66,18 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Security Scan with Trivy') {
             steps {
                 script {
                     // Create directory for results
-                  
+
                     trivy_scan()
-                    
+
                 }
             }
         }
-        
+
         stage('Push Docker Images') {
             parallel {
                 stage('Push Main App Image') {
@@ -91,7 +91,7 @@ pipeline {
                         }
                     }
                 }
-                
+
                 stage('Push Migration Image') {
                     steps {
                         script {
@@ -105,7 +105,7 @@ pipeline {
                 }
             }
         }
-        
+
         // Add this new stage
         stage('Update Kubernetes Manifests') {
             steps {
@@ -115,7 +115,7 @@ pipeline {
                         manifestsPath: 'kubernetes',
                         gitCredentials: 'github-credentials',
                         gitUserName: 'Jenkins CI',
-                        gitUserEmail: 'shubhamnath5@gmail.com'
+                        gitUserEmail: 'nayakpriyoutush@gmail.com'
                     )
                 }
             }
